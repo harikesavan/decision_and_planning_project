@@ -1,0 +1,5 @@
+numpy
+pygame
+scipy
+matplotlib
+pytest

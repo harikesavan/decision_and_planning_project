@@ -1,0 +1,57 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-dockerfile
+{
+	"name": "Decision",
+	"build": {
+		// Sets the run context to one level up instead of the .devcontainer folder.
+		"context": "..",
+		// Using devcontainers using linux
+		"dockerfile": "./build/Dockerfile"
+	},
+
+	"customizations": {
+		"vscode": {
+			// Add the IDs of extensions you want installed when the container is created.
+			"extensions": [
+				"ms-python.python",
+				"ms-toolsai.jupyter",
+				"ms-toolsai.vscode-jupyter-powertoys"
+			],
+			"settings": {
+				"terminal.integrated.defaultProfile.linux": "bash"
+			}
+		}
+	},
+
+	"runArgs": ["--network=host", "--shm-size=10gb",
+				"-e", "DISPLAY=${env:DISPLAY}",
+				"-e", "QT_X11_NO_MITSHM=1",
+				"--privileged",
+				"--device", "/dev/snd",
+				"--device", "/dev/dri",
+				"--gpus", "all",
+				"-v", "/tmp/.X11-unix:/tmp/.X11-unix"],
+				
+	"workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind",
+	"workspaceFolder": "/app",
+	"remoteUser": "docker"
+			
+}
+
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-dockerfile
+{
+	"name": "Localization",
+	"build": {
+		// Sets the run context to one level up instead of the .devcontainer folder.
+		"context": "..",
+		// Using devcontainers using linux
+		"dockerfile": "./build/Dockerfile"
+	},
+
+				
+	"workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind",
+	"workspaceFolder": "/app",
+	"remoteUser": "docker"
+}
+
