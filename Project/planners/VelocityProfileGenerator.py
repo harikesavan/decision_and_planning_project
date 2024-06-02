@@ -17,18 +17,18 @@ try:
 except IndexError:
     pass
 
-import carla
-
 # ==============================================================================
 # -- Imports  ---------------------------------------------------------
 # ==============================================================================
 import time
-from typing import Tuple, List
+from typing import List, Tuple
 
+import carla
 import numpy as np
 
-from .Structures import State, Maneuver, TrajectoryPoint, PathPoint
-from .utils import path_point_distance, get_magnitude
+from .Structures import Maneuver, PathPoint, State, TrajectoryPoint
+from .utils import get_magnitude, path_point_distance
+
 # =============================================================================
 # -- Velocity Profile Generator  ----------------------------------------------
 # =============================================================================
@@ -171,8 +171,8 @@ class VelocityProfileGenerator(object):
             # eg. temp_dist += path_point_distance(spiral[i], spiral[i-1])
             
             for i in range(stop_index,0,-1):
-                brake_index = path_point_distance(spiral[i], spiral[i-1])
-                if temp_dist > brake_distance:
+                temp_dist += path_point_distance(spiral[i], spiral[i-1])
+                if temp_dist >= brake_distance:
                     brake_index = i
                     break
                 
@@ -191,7 +191,7 @@ class VelocityProfileGenerator(object):
 
             for i in range(brake_index):
                temp_dist += path_point_distance(spiral[i], spiral[i+1])
-               if temp_dist > decel_distance:
+               if temp_dist >= decel_distance:
                     decel_index = i
                     break 
 
@@ -257,7 +257,7 @@ class VelocityProfileGenerator(object):
                 # initial velocity vi.
                 # Hint: use the self.calc_final_speed() that you completed. 
                 vf = self.calc_final_speed(vi, -self._a_max, dist)
-                vf = max(vf, self._slow_speed)
+                # vf = max(vf, self._slow_speed)
 
                 path_point = spiral[i]
                 v = vi
@@ -404,7 +404,7 @@ class VelocityProfileGenerator(object):
             # acceleration/deceleration "a". HINT look at the description of this
             # function. Make sure you handle div by 0
             
-            d = 0 # calculate this
+            d = (v_f ** 2 - v_i ** 2) / (2 * a)
         
         return d
     
@@ -422,7 +422,7 @@ class VelocityProfileGenerator(object):
         #and make v_f = 0 in that case. If the discriminant is inf or nan return
         #infinity
 
-        v_f_squared = 0 # Calculate this
+        v_f_squared = v_i ** 2 + 2 * a * d
 
         if v_f_squared <= 0:
             v_f = 0
