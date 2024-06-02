@@ -17,19 +17,18 @@ try:
 except IndexError:
     pass
 
-import carla
-
 # ==============================================================================
 # -- Imports  ---------------------------------------------------------
 # ==============================================================================
 import time
 from typing import List
 
+import carla
 import numpy as np
 
 from . import PlanningParams as params
-from .Structures import State, Maneuver, PathPoint
 from . import utils
+from .Structures import Maneuver, PathPoint, State
 
 # ==============================================================================
 # -- cost_functions  ---------------------------------------------------------
@@ -127,11 +126,11 @@ def close_to_main_goal_cost_spiral(spiral : List[PathPoint], main_goal : State):
     # 1].y and spiral[n - 1].z.
     # Use main_goal.location.x, main_goal.location.y and main_goal.location.z
     # Ex: main_goal.location.x - spiral[n - 1].x
-    delta_x = 0 # Calculate this 
-    delta_y = 0 # Calculate this 
-    delta_z = 0 # Calculate this 
+    delta_x = main_goal.location.x - spiral[n - 1].x 
+    delta_y = main_goal.location.y - spiral[n - 1].y  
+    delta_z = main_goal.location.z - spiral[n - 1].z 
 
-    dist = 0 # Use the deltas to calculate the distance
+    dist = np.sqrt(delta_x**2 + delta_y**2 + delta_z**2) # Use the deltas to calculate the distance
 
     cost = 2.0/ (1+np.exp(-dist)) - 1
     return cost
