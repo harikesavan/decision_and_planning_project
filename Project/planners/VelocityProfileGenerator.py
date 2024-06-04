@@ -109,14 +109,15 @@ class VelocityProfileGenerator(object):
         path_length = 0
         stop_index = len(spiral) - 1
 
-        for i in range(stop_index, 0, -1):
-            path_length += path_point_distance(spiral[i], spiral[i-1])
+        for i in range(stop_index):
+            path_length += path_point_distance(spiral[i], spiral[i+1])
         
         # If the brake distance exceeds the length of the path, then we cannot
         # perform a smooth deceleration and require a harder deceleration.  Build the path
         # up in reverse to ensure we reach zero speed at the required time.
 
         if brake_distance + decel_distance > path_length:
+            print("hard deceleration")
             speeds = []
             vf = 0
             # Let's add the last point, i.e at the stopping line we should have speed
@@ -158,6 +159,7 @@ class VelocityProfileGenerator(object):
         
         # If the brake distance DOES NOT exceed the length of the path
         else:
+            print("smooth deceleration")
             brake_index = stop_index
             temp_dist = 0
 
@@ -173,7 +175,7 @@ class VelocityProfileGenerator(object):
             for i in range(stop_index,0,-1):
                 temp_dist += path_point_distance(spiral[i], spiral[i-1])
                 if temp_dist >= brake_distance:
-                    brake_index = i
+                    brake_index = i-1
                     break
                 
             # Compute the index to stop decelerating to the slow speed.
@@ -296,6 +298,7 @@ class VelocityProfileGenerator(object):
         """
         trajectory = []
         accel_distance = 0
+
         if desired_speed < start_speed:
             accel_distance = self.calc_distance(start_speed, desired_speed, -self._a_max)
         else:
