@@ -109,8 +109,8 @@ class VelocityProfileGenerator(object):
         path_length = 0
         stop_index = len(spiral) - 1
 
-        for i in range(stop_index):
-            path_length += path_point_distance(spiral[i], spiral[i+1])
+        for i in range(stop_index, 0, -1):
+            path_length += path_point_distance(spiral[i], spiral[i-1])
         
         # If the brake distance exceeds the length of the path, then we cannot
         # perform a smooth deceleration and require a harder deceleration.  Build the path
@@ -296,7 +296,6 @@ class VelocityProfileGenerator(object):
         """
         trajectory = []
         accel_distance = 0
-
         if desired_speed < start_speed:
             accel_distance = self.calc_distance(start_speed, desired_speed, -self._a_max)
         else:
@@ -317,8 +316,10 @@ class VelocityProfileGenerator(object):
         for i in range(len(spiral)-1):
             distance += path_point_distance(spiral[i], spiral[i+1])
             if distance > accel_distance:
-                ramp_end_index = i
                 break
+        
+        # Put value assigning outside the loop so it's not 0 if condition isn't true
+        ramp_end_index = i+1
         
         time_step = 0
         time = 0
@@ -394,8 +395,7 @@ class VelocityProfileGenerator(object):
         required for a given acceleration/deceleration.
         """
 
-        d = 0
-        if abs(a) < dbl_epsilon:
+        if abs(a) <= dbl_epsilon:
             d = np.inf
         else:
             # TODO-calc distance: use one of the common rectilinear accelerated
