@@ -117,7 +117,6 @@ class VelocityProfileGenerator(object):
         # up in reverse to ensure we reach zero speed at the required time.
 
         if brake_distance + decel_distance > path_length:
-            print("hard deceleration")
             speeds = []
             vf = 0
             # Let's add the last point, i.e at the stopping line we should have speed
@@ -159,7 +158,6 @@ class VelocityProfileGenerator(object):
         
         # If the brake distance DOES NOT exceed the length of the path
         else:
-            print("smooth deceleration")
             brake_index = stop_index
             temp_dist = 0
 
